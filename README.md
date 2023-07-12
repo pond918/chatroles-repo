@@ -9,7 +9,8 @@
 
 </p>
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo?ref=badge_shield)
+-->
 
 ## What
 
@@ -182,3 +183,6 @@ evtSource.addEventListener("llm", (event) => {
 ## License
 
 chatroles-repo is [MIT licensed](LICENSE).
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo?ref=badge_large)
