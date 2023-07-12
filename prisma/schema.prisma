@@ -1,0 +1,366 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"] // Enable the postgresqlExtensions. Currently in preview
+}
+
+// to generate dtos/entities
+generator nestjsDto {
+  provider                        = "prisma-generator-nestjs-dto"
+  output                          = "../src"
+  outputToNestJsResourceStructure = "true"
+  exportRelationModifierClasses   = "true"
+  reExport                        = "false"
+  createDtoPrefix                 = "Create"
+  updateDtoPrefix                 = "Update"
+  dtoSuffix                       = "Dto"
+  entityPrefix                    = ""
+  entitySuffix                    = ""
+  fileNamingStyle                 = "kebab"
+  classValidation                 = "true"
+  prettier                        = "true"
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  // directUrl         = env("DIRECT_DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  extensions = [vector]
+}
+
+model Role {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk            BigInt   @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  id            String   @id @unique @db.VarChar(31) /// @description nanoid
+  /// @MinLength(2)
+  /// @MaxLength(24)
+  /// @Matches(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,23}$/i)
+  nick          String   @db.VarChar(39) /// @description duplicate nick allowed
+  /// @MaxLength(1023)
+  avatar        String?  @db.VarChar(1023)
+  /// @MaxLength(255)
+  goal          String   @db.VarChar(255) /// @description explict description of the task goal current role try to accomplish.
+  /// @MinLength(10)
+  /// @MaxLength(127)
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  skills        String[] @db.VarChar(127) /// @description special skills the role is good at.
+  /// @MinLength(2)
+  /// @MaxLength(15)
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  professionals String[] @db.VarChar(31) /// @description the role‘s professional positions
+  /// @description help text on how to use the role
+  help          String?  @db.VarChar(511)
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  /// @DtoCastType(ChatEntry, ../vo/chat-entry)
+  entries       Json[]   @db.Json /// @description chat entry schemas. @see /actors/{id}/chat/{entry}
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  /// @MinLength(2)
+  /// @MaxLength(15)
+  /// @Matches(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){1,14}$/i)
+  tags          String[] @db.VarChar(15) /// @description
+  published     Boolean? @default(false) /// @description published role is read only
+  // releasedNo String?  @map("released_no") @db.VarChar(15) /// @description release number. required when published == true.
+  // @DtoUpdateHidden
+  // @DtoEntityHidden
+  // @CustomValidator(EntityIdExists, 'role', ../../infras/validators/entity-exists.validator)
+  // originRoleId String?  @map("origin_role_id") @db.VarChar(31) /// @description original role. it's a root role if null. Reserved, since implementation not controlled here.
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  /// @CustomValidator(EntityIdExists, 'user', ../../infras/validators/entity-exists.validator)
+  createdBy     String   @map("created_by") @db.VarChar(31) /// @description creator user.
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted       Boolean? @default(false) /// @description logically delete the role. no new actor for the deleted role
+  Host          Host[]
+
+  @@index([id], type: BTree)
+  // @@index([originRoleId])
+  @@map("roles")
+}
+
+model Host {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk          BigInt   @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  id          String   @id @unique @db.VarChar(31) /// @description nanoid uuid
+  /// @DtoUpdateHidden
+  /// @DtoRelationIncludeId
+  /// @CustomValidator(EntityIdExists, 'role', ../../infras/validators/entity-exists.validator)
+  roleId      String   @map("role_id") @db.VarChar(31) /// @description chat-role id.
+  role        Role?    @relation(fields: [roleId], references: [id])
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onCreate    Json?    @map("on_create") @db.Json /// @description prompt to create the actor, only fired once. {response} will be passed to onInit. must null for `singleton`.
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onInit      Json?    @map("on_init") @db.Json /// @description prompt to init actor, may be fired many times untill `onCreated` pass. {response} will be passed to onCreated. called after create. must null for `singleton`.
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onCreated   Json?    @map("on_created") @db.Json /// @description prompt to check actor ready, fire init again if {response} non-empty. must null for `singleton`.
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onPreEntry  Json?    @map("on_pre_entry") @db.Json /// @description prompt to check actor ready, fire init again if {response} non-empty. must null for `singleton`.
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  /// @DtoCastType(ChatEntryHandle, ../vo/chat-entry-handle)
+  onEntries   Json[]   @map("on_entries") @db.Json /// @description entry prompt actions, if default entry is null, forward to LLM for response.
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onPostEntry Json?    @map("on_post_entry") @db.Json /// @description prompt to check actor ready, fire init again if {response} non-empty. must null for `singleton`.
+  /// @DtoCastType(ChatPrompt, ../vo/chat-prompt)
+  onFinish    Json?    @map("on_finish") @db.Json /// @description prompt to check task finish.
+  singleton   Boolean  @default(false) @map("singleton") /// @description `singleton` role is stateless, and has no members.
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  /// @DtoCastType(HostMember, ../vo/host-member)
+  members     Json[]   @db.Json /// @description role team members. must null for `singleton`.
+  published   Boolean? @default(false) /// @description published host is read only.
+  releasedNo  String?  @map("released_no") @db.VarChar(15) /// @description release number. required when published == true.
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  /// @CustomValidator(EntityIdExists, 'user', ../../infras/validators/entity-exists.validator)
+  createdBy   String   @map("created_by") @db.VarChar(31)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted     Boolean? @default(false) /// @description logically delete the role. no new actor for the deleted role
+  Actor       Actor[]
+
+  @@index([id], type: BTree)
+  @@index([roleId], type: BTree)
+  @@map("hosts")
+}
+
+/// @description
+model Actor {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk        BigInt   @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  id        String   @id @unique @db.VarChar(31) /// @description nanoid uuid
+  /// @DtoCreateOptional
+  /// @MinLength(2)
+  /// @MaxLength(24)
+  /// @Matches(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,23}$/i)
+  nick      String   @db.VarChar(39) /// @description  nick name. default to role name
+  avatar    String?  @db.VarChar(1023) /// @description  avatar. default to role avatar
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  /// @DtoPlainApiResponse
+  /// @DtoEntityHidden
+  ctxId     Int?     @map("ctx_id") /// @description current longrun ctx id.
+  /// @DtoUpdateHidden
+  /// @CustomValidator(EntityIdExists, 'role', ../../infras/validators/entity-exists.validator)
+  roleId    String   @map("role_id") @db.VarChar(31) /// @description chat-role id the actor created from. the role must be published.
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  /// @DtoRelationIncludeId
+  /// @CustomValidator(EntityIdExists, 'host', ../../infras/validators/entity-exists.validator)
+  hostId    String?  @map("host_id") @db.VarChar(31) /// @description chat-role host id from role. null means no host.
+  host      Host?    @relation(fields: [hostId], references: [id])
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  singleton Boolean? @default(false) @map("singleton")
+  /// @DtoCreateOptional
+  /// @CustomValidator(EntityIdExists, 'actor', ../../infras/validators/entity-exists.validator)
+  /// @example ChatRoles-system-user
+  parentId  String   @map("parent_id") @db.VarChar(31) /// @description the parent actor, default to current user if null. NOTE: the actor must be creator's descendant.
+  /// @DtoUpdateApiResponse
+  /// @DtoCreateApiResponse
+  /// @CustomValidator(EntityIdExists, 'user', ../../infras/validators/entity-exists.validator)
+  ownerId   String   @map("owner_id") @db.VarChar(31) /// @description the owner user id.
+  // parent   Actor   @relation("tree", fields: [parentId], references: [id])
+  // children Actor[] @relation("tree")
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  /// @CustomValidator(EntityIdExists, 'actor', ../../infras/validators/entity-exists.validator)
+  /// @example ChatRoles-system-user
+  createdBy String   @map("created_by") @db.VarChar(31) /// @description creator user/actor.
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted   Boolean? @default(false) /// @description logical deletion.
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  authToken String   @map("auth_token") @db.VarChar(255) /// @description jwt auth token
+
+  @@unique([parentId, nick]) // members under a parent should have unique names.
+  @@index([id], type: BTree)
+  @@index([hostId])
+  @@index([parentId])
+  @@index([ownerId])
+  @@map("actors")
+}
+
+model User {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk            BigInt   @default(autoincrement())
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateHidden
+  id            String   @id @unique @db.VarChar(31) /// @description associated actor id.
+  /// @DtoCreateHidden
+  /// @DtoUpdateHidden
+  realm         String   @default("local") @map("realm") @db.VarChar(8) /// @description  authentication realm
+  /// @DtoCreateHidden
+  /// @DtoUpdateHidden
+  /// @DtoEntityHidden
+  realmToken    String?  @map("realm_token") @db.VarChar(127) /// @description   token from the realm
+  /// @DtoCreateHidden
+  /// @DtoUpdateHidden
+  /// @DtoEntityHidden
+  info          Json?    @map("info") /// @description  authentication info from realm
+  /// @DtoUpdateHidden
+  /// @MinLength(2)
+  /// @MaxLength(39)
+  /// @Matches(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i)
+  username      String   @map("username") @db.VarChar(39) /// @description unique github style user name.
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateHidden
+  /// @DtoPlainApiResponse
+  usernameLower String   @map("username_lower") @db.VarChar(39) /// @description unique github style user name in lower case.
+  /// @MinLength(2)
+  /// @MaxLength(39)
+  nick          String?  @db.VarChar(39)
+  /// @MaxLength(1023)
+  avatar        String?  @db.VarChar(1023)
+  /// @Matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i)
+  email         String?  @db.VarChar(128)
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  /// @DtoPlainApiResponse
+  emailValid    Boolean? @default(false)
+  /// @description user resource configs. NOTE: platform resource is readonly
+  /// @DtoUpdateOptional
+  /// @DtoCastType(ResourceConfig, ../vo/resource-config)
+  /// @example [{"name": "gpt-3.5-turbo", "apiTokenType": "local", "apiToken": null, "apiHost": "https://api.openai.com"}]
+  resConfigs    Json[]   @map("res_configs") @db.Json /// @description resource configs.
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted       Boolean? @default(false) /// @description logical deletion.
+
+  @@unique([realm, usernameLower])
+  @@index([id], type: BTree)
+  @@map("users")
+}
+
+///// repo irrelative features, move away later.
+
+model MemoryNode {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk        BigInt  @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  id        String  @id @unique @db.VarChar(31) /// @description nanoid
+  key       String  @db.VarChar(31)
+  /// @DtoCreateOptional
+  /// @DtoUpdateOptional
+  parentId  String  @default("") @map("parent_id") @db.VarChar(31)
+  versionId String  @map("version_id") @db.VarChar(31)
+  /// @Matches(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,23}$/i)
+  domain    String? @db.VarChar(31)
+  actorId   String  @map("actor_id") @db.VarChar(31)
+  content   Json    @db.Json
+  summary   String? @db.VarChar(63)
+
+  // https://github.com/pgvector/pgvector-node#prisma
+  embedding Unsupported("vector(768)")?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted   Boolean? @default(false) /// @description logical deletion.
+
+  @@unique([actorId, versionId, domain, key])
+  @@index([actorId])
+  @@map("memory_nodes")
+}
+
+model MemoryVersion {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk       BigInt  @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateApiResponse
+  id       String  @id @unique @db.VarChar(31) /// @description nanoid
+  key      String  @db.VarChar(31)
+  actorId  String  @map("actor_id") @db.VarChar(31)
+  content  Json    @db.Json
+  language String? @db.VarChar(15)
+
+  published Boolean? @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted   Boolean? @default(false) /// @description logical deletion.
+
+  @@unique([actorId, key])
+  @@index([actorId])
+  @@map("memory_versions")
+}
+
+model Quota {
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  pk        BigInt    @default(autoincrement())
+  /// @DtoUpdateHidden
+  /// @DtoCreateHidden
+  id        String    @id @unique @db.VarChar(31) /// @description nanoid
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  userId    String    @map("user_id") @db.VarChar(31)
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  runtime   String    @db.VarChar(8)
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  type      String    @db.VarChar(8)
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  name      String    @db.VarChar(31)
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  quota     Int
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  invalidAt DateTime? @default(now()) @map("invalid_at") @db.Timestamptz
+  /// @description reset rule: [period in milliseconds, reset quota value].
+  /// @DtoCreateApiResponse
+  /// @DtoUpdateApiResponse
+  reset     Json?     @db.Json
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  /// @DtoReadOnly
+  /// @DtoEntityHidden
+  // DONOT FORGET TO ADD the model into `createSoftDeleteMiddleware`
+  deleted   Boolean? @default(false) /// @description logical deletion.
+
+  @@unique([userId, runtime, type, name])
+  @@index([userId])
+  @@map("quotas")
+}

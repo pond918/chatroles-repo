@@ -1,0 +1,28 @@
+{
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "cSpell.words": [
+    "chatbox",
+    "chatrole",
+    "chatroles",
+    "infras",
+    "inporterlate",
+    "jexl",
+    "jsonrepair",
+    "mgmt",
+    "middlewares",
+    "nestjs",
+    "pactum",
+    "sses",
+    "templite",
+    "ttypescript"
+  ],
+  "jestrunner.debugOptions": {
+    "program": "node_modules/jest/bin/jest.js",
+    "args": ["--watch"],
+    "env": {
+      "NODE_OPTIONS": "--experimental-vm-modules"
+    }
+  },
+  "jestrunner.configPath": "test/jest-e2e.config.js",
+  "jestrunner.jestCommand": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+}
