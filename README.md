@@ -1,8 +1,8 @@
 <p align="center">Chat with AI Roles, they'll get things done.</p>
 
 <p align="center">
-<a href="#license"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://github.com/pond918/chatroles-repo/actions"><img src="https://github.com/pond918/chatroles-repo/workflows/ci/badge.svg"/></a>
+<a href="#license"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <!-- <a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a> -->
 <a target="_blank" href="https://app.fossa.com/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo?ref=badge_shield"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpond918%2Fchatroles-repo.svg?type=shield" /></a>
 <a href="#contributors"><img src="https://img.shields.io/github/all-contributors/pond918/chatroles-repo?color=ee8449&style=flat-square"></img></a>
