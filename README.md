@@ -44,14 +44,10 @@ You may define your own `chatrole`, or just chat to existing ones in repo.
 
 a chatrole definition consists of:
 
-- [chatrole](https://repo-sandbox.roles.chat/docs/api#/chat-roles)
-  the professional role with specific task goal
-- [host](https://repo-sandbox.roles.chat/docs/api#/chat-roles%20programming)
-  the programmed prompts of the role, invoking tools and members
-- toolbox
-  platform offers several tools, e.g. llm, restAPI, vectorDB...
-- members
-  each role has several `chatroles` members as a team
+- [chatrole](https://repo-sandbox.roles.chat/docs/api#/chat-roles): the professional role with specific task goal
+- [host](https://repo-sandbox.roles.chat/docs/api#/chat-roles%20programming): the programmed prompts of the role, invoking tools and members
+- toolbox: platform offers several tools, e.g. llm, restAPI, vectorDB...
+- members: each role has several `chatroles` members as a team
 
 There are some predefined `chatroles`, please read more [here](https://roles.chat/blog/2023/introduction-to-chat-roles-repo/).
 
