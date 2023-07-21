@@ -201,7 +201,7 @@ which is related to the UI components:
 please split/refine the components, or add necessary components `;
     } else prompt += 'please create UI components ';
     prompt += `based on the stories, reply a json array:
-[{key:"unique-component-key",type:"standard UI component type",description:"component description",parent:"parent component key, or null if root",details:"detailed design",stories:["only the sibling user story keys which uses the component"]}]`;
+[{key:"unique-component-key",level:"one of: system|module|page|panel|combo|element",type:"standard UI component type",description:"component description",parent:"parent component key, or null if root",details:"detailed design",stories:["only the sibling user story keys which uses the component"]}]`;
 
     chatDto = await promptService.process(chatDto, {
       to: 'llm:quality=2',

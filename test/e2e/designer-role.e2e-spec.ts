@@ -28,110 +28,173 @@ describe('designer role use case (e2e)', () => {
 
     const testResponses = [
       `[
-      {
-        "key": "list-view",
-        "type": "Side Nav",
-        "description": "Displays a vertical list of conversations",
-        "parent": null,
-        "stories": [
-          "US-01"
-        ]
-      },
-      {
-        "key": "conversation-node",
-        "type": "Tree View Node",
-        "description": "Displays a conversation node with expand/collapse functionality",
-        "parent": "list-view",
-        "stories": [
-          "US-01",
-          "US-02",
-          "US-03",
-          "US-04"
-        ]
-      },
-      {
-        "key": "chat-box",
-        "type": "Chat Interface",
-        "description": "Displays chat history and allows users to message the selected conversation node's chat bot",
-        "parent": null,
-        "stories": [
-          "US-02",
-          "US-03"
-        ]
-      }
-    ]`,
-      `[
-      {
-      "key": "list-view",
-      "type": "Side Nav",
-      "description": "Displays a vertical list of conversations with their associated chat-roles bot",
-      "parent": null,
-      "stories": [
-      "US-01-01",
-      "US-01-02"
-      ]
-      },
-      {
-      "key": "conversation-node",
-      "type": "Tree View Node",
-      "description": "Displays a conversation node with expand/collapse functionality, allowing user to select and chat with the associated chat-roles bot",
-      "parent": "list-view",
-      "stories": [
-      "US-01-01",
-      "US-01-02"
-      ]
-      }
-      ]`,
-      `[
         {
-        "key": "conversation-node",
-        "type": "Tree View Node",
-        "description": "Displays a conversation node with expand/collapse functionality and allows user to select the associated chat-roles bot",
-        "parent": "list-view",
-        "stories": [
-        "US-03-01",
-        "US-03-02",
-        "US-03-03"
-        ]
+        "key": "app",
+        "level": "system",
+        "type": "React Application",
+        "description": "The overall React web application",
+        "parent": null,
+        "details": {
+        "Framework": "React",
+        "Router": "React Router",
+        "State Management": "Redux"
+        },
+        "stories": []
         },
         {
-        "key": "chat-box",
-        "type": "Chat Interface",
-        "description": "Displays chat history and allows users to message the selected conversation node's chat-roles bot and receive real-time responses",
-        "parent": null,
-        "stories": [
-        "US-03-01",
-        "US-03-02",
-        "US-03-03"
-        ]
+        "key": "layout",
+        "level": "module",
+        "type": "Layout",
+        "description": "The overall layout with sidebar and main area",
+        "parent": "app",
+        "details": {
+        "Layout": "Horizontal layout with sidebar on left and main area on right"
+        },
+        "stories": ["US-01", "US-02", "US-03", "US-04"]
+        },
+        {
+        "key": "sidebar",
+        "level": "panel",
+        "type": "Sidebar",
+        "description": "The sidebar showing conversation list",
+        "parent": "layout",
+        "details": {
+        "Content": "List of expandable conversation nodes"
+        },
+        "stories": ["US-01", "US-04"]
+        },
+        {
+        "key": "chatbox",
+        "level": "panel",
+        "type": "Chatbox",
+        "description": "The chatbox showing conversation messages",
+        "parent": "layout",
+        "details": {
+        "Content": "Messages between user and selected conversation"
+        },
+        "stories": ["US-02", "US-03"]
+        },
+        {
+        "key": "conversation-node",
+        "level": "element",
+        "type": "Expandable Node",
+        "description": "Each conversation node in sidebar",
+        "parent": "sidebar",
+        "details": {
+        "Expandable": "Can be expanded to show member tree",
+        "Selectable": "Can be selected to show chat in chatbox"
+        },
+        "stories": ["US-01", "US-04"]
+        },
+        {
+        "key": "send-message",
+        "level": "element",
+        "type": "Input Box",
+        "description": "Input box to send messages",
+        "parent": "chatbox",
+        "details": {
+        "Submit": "Hit enter or click button to send message"
+        },
+        "stories": ["US-03"]
         }
         ]`,
       `[
           {
-          "key": "conversation-node",
-          "type": "Tree View Node",
-          "description": "Displays a conversation node with expand/collapse functionality, allowing user to select and chat with the associated chat-roles bot.",
-          "parent": "list-view",
-          "details": "Each conversation node should have an event listener to trigger the selection of the corresponding chat-roles bot. When the node is selected, the corresponding chat history should be displayed in the chat box.",
-          "stories": [
-          "US-03-01",
-          "US-03-02",
-          "US-03-03"
-          ]
+          "key": "conversation-list",
+          "level": "element",
+          "type": "List",
+          "description": "Shows list of conversations",
+          "parent": "sidebar",
+          "details": {
+          "Orientation": "Vertical",
+          "Content": "Conversation nodes"
+          },
+          "stories": ["US-01-01"]
           },
           {
-          "key": "chat-box",
-          "type": "Chat Interface",
-          "description": "Displays chat history and allows users to message the selected conversation node's chat bot.",
-          "parent": null,
-          "details": "The chat box should allow users to type and send messages to the selected chat-roles bot. The chat history of the selected conversation node should be displayed in the chat box, and new messages from the bot should be displayed in real-time as they arrive.",
-          "stories": [
-          "US-03-01",
-          "US-03-02",
-          "US-03-03"
-          ]
+          "key": "conversation-node",
+          "level": "element",
+          "type": "Node",
+          "description": "Each node in conversation list",
+          "parent": "conversation-list",
+          "details": {
+          "Expandable": "Can expand to show members",
+          "Selectable": "Can select to show chat"
+          },
+          "stories": ["US-01-01", "US-01-02"]
+          },
+          {
+          "key": "bot-avatar",
+          "level": "element",
+          "type": "Avatar",
+          "description": "The avatar for the chatbot",
+          "parent": "conversation-node",
+          "details": {
+          "Content": "Image/Icon representing chatbot"
+          },
+          "stories": ["US-01-02"]
+          },
+          {
+          "key": "bot-name",
+          "level": "element",
+          "type": "Text",
+          "description": "The name of the chatbot",
+          "parent": "conversation-node",
+          "details": {
+          "Content": "Name of the chatbot"
+          },
+          "stories": ["US-01-02"]
           }
           ]`,
+      `[
+            {
+            "key": "message-list",
+            "level": "element",
+            "type": "List",
+            "description": "Shows list of messages",
+            "parent": "chatbox",
+            "details": {
+            "Orientation": "Vertical",
+            "Content": "Messages"
+            },
+            "stories": ["US-03-01", "US-03-03"]
+            },
+            {
+            "key": "user-message",
+            "level": "element",
+            "type": "Message",
+            "description": "User's message",
+            "parent": "message-list",
+            "details": {
+            "Position": "Right aligned",
+            "Content": "Text message from user"
+            },
+            "stories": ["US-03-02"]
+            },
+            {
+            "key": "bot-message",
+            "level": "element",
+            "type": "Message",
+            "description": "Bot's reply message",
+            "parent": "message-list",
+            "details": {
+            "Position": "Left aligned",
+            "Content": "Text message from bot"
+            },
+            "stories": ["US-03-03"]
+            },
+            {
+            "key": "send-message",
+            "level": "element",
+            "type": "Input Box",
+            "description": "Input box to type message",
+            "parent": "chatbox",
+            "details": {
+            "Submit": "Send on enter or button click"
+            },
+            "stories": ["US-03-02"]
+            }
+            ]`,
     ];
     const resp = await chat2Actor(actorId, 'generate', true, {
       options: {
