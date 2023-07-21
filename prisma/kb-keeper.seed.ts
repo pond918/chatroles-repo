@@ -147,7 +147,7 @@ resp.data === true means resp.text is the answer.',
       },
       {
         name: 'version-count',
-        description: 'get the version by key with node count.',
+        description: 'get the version by key and nodes count in the version.',
         handle: { to: 'memory:versions#count' },
       },
       {

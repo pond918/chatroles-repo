@@ -89,7 +89,7 @@ const generatePRD = async (
   actor: Actor,
 ) => {
   chatDto.data || (chatDto.data = {});
-  chatDto.options.domain = 'US';
+  chatDto.options.domain = 'PRD';
 
   let {
     // eslint-disable-next-line prefer-const
@@ -208,7 +208,7 @@ reply a json array( or empty array if unbreakable) without explanation:
 
     chatDto.options.stateless = true;
     chatDto = await promptService.process(chatDto, {
-      to: 'llm:cost=2',
+      to: 'llm:quality=2',
       prompt,
     });
     delete chatDto.options.stateless;

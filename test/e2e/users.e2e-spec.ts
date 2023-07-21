@@ -9,7 +9,7 @@ import {
 import { AppConstant } from '../../src/app.constants';
 import { TestConstant } from '../test-constants';
 
-export const updateUser = () => {
+export const updateSystemUser = () => {
   return pactum
     .spec()
     .patch('/api/users')
@@ -84,7 +84,7 @@ describe('UsersController (e2e)', () => {
   });
 
   it(`${endpoint} (POST): update user`, async () => {
-    const user = (await updateUser().expectStatus(200)).json;
+    const user = (await updateSystemUser().expectStatus(200)).json;
     console.log(user);
   });
 });

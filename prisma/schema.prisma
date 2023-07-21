@@ -280,7 +280,7 @@ model MemoryNode {
   domain    String? @db.VarChar(31)
   actorId   String  @map("actor_id") @db.VarChar(31)
   content   Json    @db.Json
-  summary   String? @db.VarChar(63)
+  summary   String? @db.VarChar(256)
 
   // https://github.com/pgvector/pgvector-node#prisma
   embedding Unsupported("vector(768)")?

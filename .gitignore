@@ -3,6 +3,7 @@
 /node_modules
 /target
 /bak
+/prisma/migrations
 
 # `pnpm prisma generate` generated files
 **/dto/*.dto.ts

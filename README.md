@@ -101,32 +101,32 @@ npx prisma migrate dev # all in one: generate db migrations file; apply db schem
 
 ```bash
 # development
-$ pnpm run start
+pnpm run start
 
 # watch mode
-$ pnpm run start:dev
+pnpm run start:dev
 
 # production mode
-$ pnpm run start:prod
+pnpm run start:prod
 ```
 
 ### Testing
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # TDD: runs specific e2e test cases
-$ npm run test:e2e -- --watch --coverage --testPathPattern 'actors' --testNamePattern actors 
+npm run test:e2e -- --watch --coverage --testPathPattern 'actors' --testNamePattern actors 
 
 # e2e test with sql query logs, loglevel=[0,6], from silent to verbose
-$ loglevel=1 npm run test:e2e [...]
+loglevel=1 npm run test:e2e [...]
 
 # e2e tests all
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
 ### Misc

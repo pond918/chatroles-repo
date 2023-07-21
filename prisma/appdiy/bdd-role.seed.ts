@@ -75,7 +75,7 @@ const generateBDD = async (
       message: `No draft version found to generate BDD cases, ${version?.key}`,
     };
 
-  chatDto.options.domain = 'US';
+  chatDto.options.domain = 'PRD';
   chatDto = await promptService.process(chatDto, {
     to: '@parent@BA@KBK#chains',
     prompt: version.id,
@@ -142,7 +142,7 @@ const generateBDD = async (
     );
     chatDto.options.stateless = true;
     chatDto = await promptService.process(chatDto, {
-      to: 'llm:cost=2',
+      to: 'llm:quality=2',
       prompt: `Given the requirement and part of the user stories chain:
 ${content}
 generate all BDD cases in English into a single Gherkin markdown code block for acceptance/coverage test.`,
@@ -175,7 +175,7 @@ generate all BDD cases in English into a single Gherkin markdown code block for 
   const fNames = Array.from(features.keys());
   do {
     chatDto = await promptService.process(chatDto, {
-      to: 'llm:cost=2',
+      to: 'llm:quality=2',
       prompt: `Given the BDD cases \`Features\` array:
 ${JSON.stringify(fNames)}
 Please merge similar features and re-organize as json object:
@@ -201,13 +201,13 @@ Note: json must contain all features in array!`,
     });
     if (scs.length > 1) {
       chatDto = await promptService.process(chatDto, {
-        to: 'llm:cost=2',
+        to: 'llm:quality=2',
         prompt: `Given the BDD cases array for \`${feat}\`:
 ${JSON.stringify(cases)}
 Please merge similar cases and re-organize as json array:
-[  
+[
   ["the merged Gherkin case with full plain text",[...original_case_indices]]  
- ]`,
+]`,
       });
     }
     const mergedCases =

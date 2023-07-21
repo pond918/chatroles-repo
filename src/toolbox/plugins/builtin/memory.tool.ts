@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Actor } from '@prisma/client';
 import { ChatDto } from '../../../actors/chats/dto/chat-dto';
 import { SimpleChatPrompt } from '../../../actors/prompts/prompts.service';
-import { UUID } from '../../../infras/repos/uuid';
 import { CreateMemoryNodeDto } from '../../../memory-nodes/dto/create-memory-node.dto';
 import { MemoryService } from '../../../memory-nodes/memory.service';
 import { CreateMemoryVersionDto } from '../../../memory-versions/dto/create-memory-version.dto';
@@ -205,11 +204,8 @@ export class MemoryTool extends AbsToolPlugin implements OnModuleInit {
     if (!Array.isArray(data)) data = [data];
     const nodes: CreateMemoryNodeDto[] = [];
     for (const content of data) {
-      if (create == !!content.id)
-        throw new BadRequestException('invalid id for create.');
-      const id = create ? await UUID.gen() : content.id;
       nodes.push({
-        id,
+        id: content.id,
         actorId: actor.id,
         key: content.key,
         versionId: content.versionId,

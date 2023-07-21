@@ -246,8 +246,8 @@ export async function generatePRD(parentId?: string, testResponses?: string[]) {
   // break the requirement
   let resp = (
     await chat2Actor(aId, 'generate', true, {
-      text: '制作一个web客户端，通过restAPI对接一个已有的后端服务"chat-roles-repo"，从而与后端大量预定义的chat-roles机器人对话。\
-客户端左侧纵向显示会话列表，每个会话对应一个chat-roles机器人，表示一个用户给机器人的一个任务。每个机器人内包含若干成员机器人互相协作。会话节点可以展开为成员树，任意选中一个节点，可与节点机器人对话。\
+      text: '制作一个web客户端，通过restAPI对接一个已有的后端服务"chatroles-repo"，从而与后端大量预定义的chat-roles机器人对话。\
+客户端左侧纵向显示会话列表，每个会话对应一个chatroles机器人，表示一个用户给机器人的一个任务。每个机器人内包含若干成员机器人互相协作。会话节点可以展开为成员树，任意选中一个节点，可与节点机器人对话。\
 右侧主体是chatbox，显示选中会话节点的聊天记录，并可以实时与节点机器人对话。',
       data: { versionKey: '1.0.0', language: 'Chinese' },
       options: {

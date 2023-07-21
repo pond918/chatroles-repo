@@ -299,13 +299,15 @@ export class MemoryService {
   async getVersion(actor: Actor, key?: string) {
     if (!key) return this.getLastVersion(actor);
     return this.transactionScope.run(async (prisma) =>
-      prisma.memoryVersion.findUnique({
-        where: { actorId_key: { actorId: actor.id, key } },
+      prisma.memoryVersion.findFirst({
+        where: { actorId: actor.id, key },
       }),
     );
   }
 
   /**
+   * get version, with nodes count.
+   *
    * @returns : { version, nodes: number } | null
    */
   async getVersionCounted(actor: Actor, key?: string) {

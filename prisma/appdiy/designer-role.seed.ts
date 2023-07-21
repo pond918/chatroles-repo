@@ -105,7 +105,7 @@ const generateUINodesHandle = async (
   chatDto: ChatDto,
   promptService: ScriptPromptService,
 ) => {
-  const { text, data } = chatDto;
+  // const { text, data } = chatDto;
   let designVersion: MemoryVersion;
 
   // clear existing draft
@@ -181,7 +181,7 @@ const generateUINodesHandle = async (
 
       // break node
       chatDto = await promptService.process(chatDto, {
-        to: 'llm:cost=2',
+        to: 'llm:quality=2',
         prompt: `please act as a UI designer for requirement:
 {
 ${prdRoot.content}
@@ -190,7 +190,7 @@ given the related user stories:
 [${stories}]
 please group stories by UI sub-components under parent component:{key:"${node.key}",type:"${node.content.type}",description:"${node.content.description}"},
 reply a json array(exclude "${node.key}"):
-[{key:"unique component key, or null if '${node.key}' has no sub",type:"standard UI component type",description:"component description",page:"page uri the component belongs to",stories:["user story key which uses the component "]]`,
+[{key:"unique component key, or null if '${node.key}' has no sub",type:"standard UI component type",description:"component description",page:"page uri the component belongs to",stories:["user story key which uses the component"]}]`,
       });
       const subs = promptService.toJSON(chatDto.text);
 
