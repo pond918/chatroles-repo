@@ -36,7 +36,7 @@ export class LocalResourceDriver
     ctx: Record<string, any>,
     actor: Actor,
   ): Promise<QuickResponse<ChatDto>> {
-    dto.options.model = config.url;
+    dto.options.url = config.url;
 
     const eventTopic = EventTopic[config.type];
     if (!eventTopic)
@@ -59,7 +59,7 @@ export class LocalResourceDriver
 
       const resp = await promise;
       dto = resp[0];
-      delete dto.options?.model;
+      delete dto.options?.url;
       return dto;
     } catch (err) {
       if (err.message?.indexOf('timeout') >= 0)

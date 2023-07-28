@@ -68,7 +68,7 @@ export class ServerLLMsDriver
       return ChatDto.error(
         dto,
         503,
-        'failed to init session for llm bot: ' + dto.options.model,
+        'failed to init session for llm bot: ' + dto.options.url,
         chatPrompt,
       );
 

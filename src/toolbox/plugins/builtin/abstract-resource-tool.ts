@@ -80,7 +80,17 @@ export abstract class AbsResourceTool extends AbsToolPlugin {
     }
 
     // 4. invoke driver, session pool is maintained inside driver.
+    chatDto.options.config_props = config.props;
     const resp = await driver._invoke(config, chatDto, chatPrompt, ctx, actor);
+    if (!Array.isArray(resp)) {
+      if (resp.options?.config_props) {
+        config.props = { ...config.props, ...resp.options?.config_props };
+        delete chatDto.options.config_props;
+        // save local config bind
+        const _bindConfigKey = this._getActorBoundCtxKey(chatPrompt);
+        ctx[_bindConfigKey] = config;
+      }
+    } // FIXME if is array
 
     // 5. update platform quota
     if (quota && resQuota != chatDto.options.quotaTokens) {
@@ -95,13 +105,18 @@ export abstract class AbsResourceTool extends AbsToolPlugin {
     return resp;
   }
 
+  protected _getActorBoundCtxKey(chatPrompt: SimpleChatPrompt) {
+    return 'me.resource.' + chatPrompt.to;
+  }
+
   /** select based on user configs. once chosen, usually don not change. */
-  private async _getResourceConfig(
+  protected async _getResourceConfig(
     chatPrompt: SimpleChatPrompt,
     ctx: Record<string, any>,
   ): Promise<ResourceConfig> {
     /** fix to chosen resource for the actor. */
-    let config = await ctx['me.resource.' + chatPrompt.to];
+    const _bindConfigKey = this._getActorBoundCtxKey(chatPrompt);
+    let config = await ctx[_bindConfigKey];
     if (config) return config;
 
     // select from logon user config,
@@ -115,9 +130,10 @@ export abstract class AbsResourceTool extends AbsToolPlugin {
       );
 
     /** fix to the chosen resource for the actor. */
-    ctx['me.resource.' + chatPrompt.to] = config;
+    ctx[_bindConfigKey] = { ...config };
     return config;
   }
+
   protected async _filterUserConfigs(resConfigs: ResourceConfig[]) {
     // filter by protocol/quota
     const configs: ResourceConfig[] = [];
@@ -154,6 +170,7 @@ export abstract class AbsResourceTool extends AbsToolPlugin {
   /** if runtime local, just forward req to local. */
   protected _getResourceDriver(config: ResourceConfig): AbsResourceDriver {
     if (config.runtime === 'local') {
+      // all local protocol goes to same driver
       // always forward all req to local runtime.
       return this.pluginProvider.getPlugin(
         LocalResourceDriver.prototype.pname(),
