@@ -57,6 +57,18 @@ export class MemoryService {
       if (version?.actorId != actor.id) return null;
 
       const nodes = await prisma.memoryNode.findMany({
+        select: {
+          id: true,
+          key: true,
+          parentId: true,
+          versionId: true,
+          domain: true,
+          actorId: true,
+          content: true,
+          summary: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         where: { versionId: version.id, domain, actorId: actor.id },
         orderBy: { key: 'asc' },
       });

@@ -206,12 +206,12 @@ reply a json array( or empty array if unbreakable) without explanation:
     else
       prompt += `\nrestrict new sub stories only for \`${nodeKey}\`, and prevent overlap with other existing stories!`;
 
-    chatDto.options.stateless = true;
+    // chatDto.options.stateless = true;
     chatDto = await promptService.process(chatDto, {
       to: 'llm:quality=2',
       prompt,
     });
-    delete chatDto.options.stateless;
+    // delete chatDto.options.stateless;
 
     // send user-command to wait for user confirm
     return await promptService.process(

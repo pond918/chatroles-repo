@@ -106,9 +106,11 @@ const generateBDD = async (
       if (f || sc) {
         // Save the previous scenario and start a new one
         if (currentScenario?.length > 0) {
-          let scenarios = features.get(currentFeature);
-          scenarios || features.set(currentFeature, (scenarios = []));
-          scenarios.push(currentScenario);
+          if (currentFeature) {
+            let scenarios = features.get(currentFeature);
+            scenarios || features.set(currentFeature, (scenarios = []));
+            scenarios.push(currentScenario);
+          }
         }
         if (f) {
           currentFeature = line;
@@ -140,12 +142,12 @@ const generateBDD = async (
         (typeof n.content == 'string' ? n.content : JSON.stringify(n.content)),
       '',
     );
-    chatDto.options.stateless = true;
+    // chatDto.options.stateless = true;
     chatDto = await promptService.process(chatDto, {
       to: 'llm:quality=2',
       prompt: `Given the requirement and part of the user stories chain:
 ${content}
-generate all BDD cases in English into a single Gherkin markdown code block for acceptance/coverage test.`,
+generate all BDD cases(with leading "Feature" titles, and "Scenario" sections) in English into a single Gherkin markdown code block for acceptance/coverage test.`,
     });
     let bddContent = chatDto.text;
 
@@ -241,6 +243,6 @@ Please merge similar cases and re-organize as json array:
   // save nodes into BA role
   chatDto.data = nodes;
   chatDto.options.domain = 'BDD';
-  delete chatDto.options.stateless;
+  // delete chatDto.options.stateless;
   return promptService.process(chatDto, { to: '@parent@BA@KBK#import' });
 };

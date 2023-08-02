@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { createRequirementAnalyst } from './ba-role.seed';
 import { createBDDRole } from './bdd-role.seed';
 import { createProductManager } from './pm-role.seed';
+import { createUIArchitect } from './ui-architect-role.seed';
 import { createUIDesigner } from './ui-designer-role.seed';
 
 export enum AppDIYConstants {
@@ -9,6 +10,9 @@ export enum AppDIYConstants {
   bddRoleId = 'bdd-analyst',
   designerRoleId = 'software-designer',
   uiDesignerRoleId = 'software-ui-designer',
+  uiArchitectRoleId = 'software-ui-architect',
+  dddRoleId = 'software-domain-designer',
+  bffRoleId = 'software-bff-API-designer',
   pmRoleId = 'product-manager',
 }
 
@@ -18,6 +22,9 @@ export const seedAppDIY = (prisma: PrismaClient) => {
   createRequirementAnalyst(prisma);
   createBDDRole(prisma);
   createUIDesigner(prisma);
+  createUIArchitect(prisma);
+  // createDDDDesigner(prisma);
+  // createBFFDesigner(prisma);
   // 协调多个kbs的transform
   createProductManager(prisma);
 };

@@ -46,7 +46,10 @@ export const mockClientLocalLLM = async (url: string) => {
       }
     };
     evtSource.addEventListener('close', () => evtSource.close());
-  } else console.log('NO SSE TEST subscription.');
+  } else {
+    console.log('NO SSE TEST subscription.');
+    await pactum.sleep(1000);
+  }
 
   return evtSource;
 };

@@ -92,7 +92,7 @@ const createKBKeeper = async (prisma: PrismaClient) => {
         name: 'query',
         contextual: false,
         description:
-          'criteria query {parentIds?, versionId?, domain?, count || 1}, reply nodes.',
+          'criteria query {parentIds?, versionId?, count || 1}, reply nodes.',
         handle: { to: 'memory:nodes#query' },
       },
       {
@@ -121,7 +121,8 @@ resp.data === true means resp.text is the answer.',
       },
       {
         name: 'get',
-        description: 'get a node by key, or latest if key empty',
+        description:
+          'get a node by key, or latest if key empty, chatDto.data: {key, versionId}',
         handle: { to: 'memory:nodes#get' },
       },
       {

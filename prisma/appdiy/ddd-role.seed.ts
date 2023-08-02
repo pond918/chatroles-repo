@@ -5,22 +5,24 @@ import { ScriptPromptService } from '../../src/toolbox/plugins/builtin/script.to
 import { KBKConstants } from '../kb-keeper.seed';
 import { AppDIYConstants } from './appdiy.seed';
 
-export async function createUIDesigner(prisma: PrismaClient) {
+export async function createDDDesigner(prisma: PrismaClient) {
   const designerRoleDef = {
-    id: AppDIYConstants.uiDesignerRoleId,
-    nick: 'ui-designer',
-    goal: 'to design UI components from PRD.',
-    skills: ['design UI from PRD', 'request to refine PRD if needed'],
+    id: AppDIYConstants.dddRoleId,
+    nick: 'domain-designer',
+    goal: 'to design DDD domain services from PRD.',
+    skills: [
+      'design domain services from PRD based on domain driven design (DDD)',
+    ],
     professionals: ['UI designer'],
     createdBy: AppConstant.systemUsername,
     published: true,
     entries: [],
   };
 
-  const designerHostId = AppDIYConstants.uiDesignerRoleId + '-host';
+  const designerHostId = AppDIYConstants.dddRoleId + '-host';
   const designerHostDef = {
     id: designerHostId,
-    roleId: AppDIYConstants.uiDesignerRoleId,
+    roleId: AppDIYConstants.dddRoleId,
     createdBy: AppConstant.systemUsername,
     published: true,
     releasedNo: '0.0.1',
@@ -43,7 +45,7 @@ export async function createUIDesigner(prisma: PrismaClient) {
       {
         name: 'generate',
         description:
-          'reset and generate ui from @parent@BA\'s PRD, dto{ text: "requirement to the design, like OS, theme, etc.", data: "PRD version, empty means newest." }',
+          'generate ui from @parent@BA\'s PRD, dto{ text: "requirement to the design, like OS, theme, etc.", data: "PRD version, empty means newest." }',
         handle: {
           to: 'script',
           prompt: generateUINodesHandle.toString(),
@@ -63,7 +65,7 @@ export async function createUIDesigner(prisma: PrismaClient) {
   };
 
   const designer = await prisma.role.upsert({
-    where: { id: AppDIYConstants.uiDesignerRoleId },
+    where: { id: AppDIYConstants.dddRoleId },
     create: designerRoleDef,
     update: designerRoleDef,
   });
@@ -154,7 +156,6 @@ const generateUINodesHandle = async (
     summary: 'app UI design root',
     content: {
       key: 'ui-design-root',
-      level: 'root',
       type: 'ui-design-root',
       description: 'app UI design root',
       stories: [prdRoot.key],
@@ -222,7 +223,6 @@ please split/refine the components, or add necessary components `;
         summary: c.description,
         content: {
           key: c.key,
-          level: c.level,
           type: c.type,
           description: c.description,
           stories: c.stories,

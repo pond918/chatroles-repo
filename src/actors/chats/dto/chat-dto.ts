@@ -75,7 +75,8 @@ class ChatOptions {
 
 export class ChatDto {
   @ApiProperty({
-    description: 'llm contextual parent message id. null means no context.',
+    description:
+      'llm contextual parent message id. null means append to current conversation. empty string means start new conversation.',
     required: false,
   })
   @IsString()
