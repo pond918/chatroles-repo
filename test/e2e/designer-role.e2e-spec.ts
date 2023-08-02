@@ -3,9 +3,9 @@ import { expression } from 'pactum-matchers';
 import Spec from 'pactum/src/models/Spec';
 import { createActor } from './actors.e2e-spec';
 import { afterEachFn, beforeEachFn } from './app-init.e2e';
-import { generateBDDCases } from './bdd-role.e2e-spec';
 import { chat2Actor } from './chats.e2e-spec';
 import { afterAllSSE, beforeAllSSE } from './sse-init.e2e';
+import { generatePRD } from './ba-role.e2e-spec';
 
 const designerRoleId = 'software-ui-designer';
 const designerHostId = designerRoleId + '-host';
@@ -27,8 +27,15 @@ describe('designer role use case (e2e)', () => {
 });
 
 export const generateUIComponents = async (): Promise<[string, Spec]> => {
-  const [rootActorId, resp0] = await generateBDDCases();
-  await resp0;
+  const { id: rootActorId } = (
+    await createActor({
+      roleId: designerRoleId,
+      hostId: designerHostId,
+      nick: 'tskRoot',
+    })
+  ).json;
+  await generatePRD(rootActorId);
+
   const { id: actorId } = (
     await createActor({
       roleId: designerRoleId,

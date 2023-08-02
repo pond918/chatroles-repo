@@ -104,36 +104,10 @@ export async function generateBDDCases(): Promise<[string, Spec]> {
     await createActor({ roleId: bddRoleId, hostId: bddHostId, nick: 'tskRoot' })
   ).json;
 
-  const prdTestResponses = [
-    `[{"key":"US-01","summary":"显示会话列表","userStory": "作为用户，我希望在web客户端左侧能够看到一个纵向的会话列表，以便了解所有可用的会话。","acceptanceCriteria":["打开web客户端时，会话列表应该显示在左侧","每个会话对应一个chat-roles机器人"]},
-    {"key":"US-02","summary":"展示选中会话节点的聊天记录","userStory": "作为用户，我希望在右侧主体的chatbox中能够实时显示选中会话节点的聊天记录，以便与节点机器人进行交流。","acceptanceCriteria":["选中会话节点后，chatbox应该显示相应的聊天记录","聊天记录应该是实时更新的"]},
-    {"key":"US-03","summary":"与会话节点机器人对话","userStory": "作为用户，我希望能够与选中的会话节点机器人进行对话，以便传达任务或获取信息。","acceptanceCriteria":["选中会话节点后，可以在chatbox中与节点机器人对话"]},
-    {"key":"US-04","summary":"展开会话节点成员树","userStory": "作为用户，我希望能够展开会话节点，以便查看该节点下的成员树，了解成员机器人的协作情况。","acceptanceCriteria":["会话节点应该有展开/折叠的功能","展开会话节点后，应显示该节点下的成员树"]}]`,
-    `[{"key":"US-01-01","summary":"查看会话列表","userStory":"作为用户，我希望能够查看纵向排列的会话列表，以便了解所有可用的会话。","acceptanceCriteria":["打开web客户端时，会话列表应该显示在左侧"]},{"key":"US-01-02","summary":"会话与chat-roles机器人对应","userStory":"作为用户，我希望每个会话能够对应一个chat-roles机器人，以表示一个用户给机器人的一个任务。","acceptanceCriteria":["每个会话都有一个对应的chat-roles机器人"]}]`,
-    `[
-      {
-        "key": "US-03-01",
-        "summary": "选择会话节点",
-        "userStory": "作为用户，我希望能够在会话列表中选择一个节点，以便与该节点的机器人进行对话。",
-        "acceptanceCriteria": ["在会话列表中点击一个会话节点，chatbox应该显示该节点的聊天记录"]
-      },
-      {
-        "key": "US-03-02",
-        "summary": "发送消息给节点机器人",
-        "userStory": "作为用户，我希望能够在chatbox中输入消息并发送给选中的会话节点机器人，以便与其进行对话。",
-        "acceptanceCriteria": ["在chatbox中输入消息内容，并点击发送按钮后，消息应该被发送给选中的会话节点机器人"]
-      },
-      {
-        "key": "US-03-03",
-        "summary": "接收节点机器人的响应消息",
-        "userStory": "作为用户，我希望能够在chatbox中实时接收选中会话节点机器人的响应消息，以便进行交流。",
-        "acceptanceCriteria": ["chatbox应该实时显示选中会话节点机器人的响应消息"]
-      }
-    ]`,
-  ];
+  // FIXME BDD is generated based on PRD/UI/API designs
 
   // generate stories first
-  await generatePRD(rootActorId, prdTestResponses);
+  await generatePRD(rootActorId);
 
   // create an actor in new ctx,
   const { id: aId } = (

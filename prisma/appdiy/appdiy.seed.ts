@@ -18,13 +18,18 @@ export enum AppDIYConstants {
 
 /** 核心是解耦拆解，支点是tree-structured内容产出 */
 export const seedAppDIY = (prisma: PrismaClient) => {
-  // step1: 需求拆解为user stories
+  // #1: 需求生成PRD，拆解为user stories
   createRequirementAnalyst(prisma);
-  createBDDRole(prisma);
+  // #2: UI design, from PRD
   createUIDesigner(prisma);
+  // #3 UI framework, from PRD and UI
   createUIArchitect(prisma);
+  // #4 DDD services, from PRD (and UI)
   // createDDDDesigner(prisma);
+  // #5 BFF APIs, from PRD, UI, DDD
   // createBFFDesigner(prisma);
+  // #6 BDD, from PRD, UI, DDD, API, 流程图/时序图, 类图/ER图
+  createBDDRole(prisma);
   // 协调多个kbs的transform
   createProductManager(prisma);
 };
